@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button id="start">Start</button><button id="stop">Stop</button>
+    <audio id="ado" controls></audio>
+
+
+
+    <script>
+        let start = document.getElementById("start");
+        let stop = document.getElementById("stop");
+        let audio = document.getElementById("ado");
+        
+        let mediaRecorder
+        let chunks = []
+
+        start.addEventListener('click', ()=>{
+
+         navigator.mediaDevices.getUserMedia({audio: true}).then((stream)=>{
+            mediaRecorder = new MediaRecorder(stream)
+            mediaRecorder.addEventListener('dataavailable', (e)=>{
+                chunks.push(e.data)
+            })
+
+
+
+            mediaRecorder.addEventListener('stop', (e)=>{
+
+
+                const blob = new Blob(chunks, { type: 'audio/wav' });
+        const url = URL.createObjectURL(blob);
+        audio.src = url;
+        console.log(url);
+        chunks = [];
+            })
+
+            mediaRecorder.start()
+
+         }).catch(error => {
+      console.error('Error accessing microphone:', error);
+    });
+
+        })
+
+
+
+        stop.addEventListener('click', () => {
+  if (mediaRecorder) {
+    mediaRecorder.stop();
+  }
+});
+
+
+
+
+
+
+
+
+    // let player = document.getElementById("vdo")
+    // navigator.mediaDevices.getUserMedia({video: true}).then((stream)=>{
+    //       player.srcObject = stream
+    //       player.play()
+    // }).catch((err)=>{console.log(err)})
+
+
+
+    </script>
+
+</body>
+</html>
